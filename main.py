@@ -27,6 +27,8 @@ import rvi_capture_copy as rvi
 # TODO: changing the packet capture algorithm with C code (using libimobiledevice)
 # TODO: able to select the device from the multiple devices
 
+import logging
+
 def main():
     # gets the list of connected device
     # NOTE: only shows number, udid, type 
@@ -43,6 +45,13 @@ def main():
 
     file_name = input("Please enter the name of the file: ")
     file_name = file_name + ".pcapng"
+
+    # live capture option
+    print("Live Capture?(Y/N)")
+    live = input()
+
+    if live == "Y":
+        rvi.start_live_capture(udid)
     print("\n\nStart Capturing the packets from the device, in order to stop the capture press 'Ctrl + C'\n\n")
     rvi.start_capture(udid, file_name)
 
