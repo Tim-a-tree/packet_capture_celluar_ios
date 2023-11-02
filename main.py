@@ -23,11 +23,10 @@ import time
 
 # auto-detection
 def auto_detect():
-    device = usbmux.list_devices()
+    devices = usbmux.list_devices()
     
     return devices
 
-# NOTE: currently only detects when the device is connected
 # TODO: realtime packet capture
 # TODO: changing the packet capture algorithm with C code (using libimobiledevice)
 # TODO: able to select the device from the multiple devices
@@ -45,10 +44,15 @@ def main():
             time.sleep(1)
         else:
             break
-    print(device_name)
-    udid = device_name[0].serial
-    print("UDID: ", udid) # WARNING: only gets the first device from the list, it will be updated later
-    # print(get_interface(udid))
+
+    print("----------------- Connected Devices -----------------")
+    for i in range(len(device_name)):
+        print(i, device_name[i].serial)
+
+    print("Select the device from the list:")
+    device_num = int(input())
+    udid = device_name[device_num].serial
+    print("UDID: ", udid) 
 
     file_name = input("Please enter the name of the file: ")
     file_name = file_name + ".pcapng"
@@ -56,6 +60,7 @@ def main():
     # live capture option
     print("Live Capture?(Y/N)")
     live = input()
+
 
     if live == "Y":
         rvi.start_live_capture(udid)

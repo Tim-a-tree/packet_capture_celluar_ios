@@ -358,10 +358,9 @@ def start_capture(udid, file_name):
         stderr_print()
         raise
 
+# TODO: live capture using pyshark check documentation 'pyshark' module
 def start_live_capture(udid):
     # command = "wireshark -k -i -"
     # process = subprocess.Popen(["win_cmd", command], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     capture = pyshark.LiveCapture(interface = "USB", bpf_filter='ether src host 11:22:33:44:55:66', use_json=True, include_raw=True)
     
-    for raw_data in capture.sniff_continuously():
-        
