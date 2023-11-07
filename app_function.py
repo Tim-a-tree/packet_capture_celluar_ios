@@ -1,19 +1,5 @@
 from pymobiledevice3 import usbmux, lockdown, services
-
-class Device:
-    def __init__(self, name, device_type, device_serial, udid):
-        self.device_name = name
-        self.device_type = device_type
-        self.device_serial = device_serial
-        self.udid = udid
-
-    def to_json(self):
-        return {
-            "device_name": self.device_name,
-            "device_type": self.device_type,
-            "device_serial": self.device_serial,
-            "udid": self.udid
-        }
+from device import Device
 
 def list_devices():
     devices = usbmux.list_devices()

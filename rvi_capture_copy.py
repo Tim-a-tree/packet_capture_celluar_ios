@@ -9,6 +9,7 @@ import struct
 import sys
 import time
 import subprocess
+import socketio
 
 # TODO: refactor this code
 # code from https://github.com/gh2o/rvi_capture
