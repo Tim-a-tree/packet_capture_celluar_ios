@@ -46,7 +46,7 @@ def main():
 
     file_name = device_info + "_" + str(calendar.timegm(time.gmtime())) + ".pcapng"
 
-
+    rvi.start_capture(udid, file_name)
 '''
 ############    Currently, the live capture is not working properly.
 DIABLED
@@ -62,6 +62,8 @@ DIABLED
     print("\n\nStart Capturing the packets from the device, in order to stop the capture press 'Ctrl + C'\n\n")
     rvi.start_capture(udid, file_name)
 '''
+    
+
 
 
 if __name__ == "__main__":

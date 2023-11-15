@@ -37,7 +37,7 @@ def get_packet(udid):
     print("Device Name: ", device_name)
 
     af.set_file_name(device_name)
-    rvi.start_capture(udid)
+    rvi.start_capture(udid, af.get_file_name())
 
     response = make_response()
     response.headers.add("Access-Control-Allow-Origin", "*")

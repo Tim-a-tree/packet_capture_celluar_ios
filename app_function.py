@@ -6,7 +6,7 @@ import time
 def list_devices():
     devices = usbmux.list_devices()
 
-    list_devices = []        
+    list_devices = []
     for device in devices:
         client = lockdown.create_using_usbmux(device.serial)
 
@@ -16,10 +16,10 @@ def list_devices():
         device_udid = client.get_value(None, "UniqueDeviceID")
         # device_build_version = client.get_value(None, "BuildVersion")
         # device_product_version = client.get_value(None, "ProductVersion")
-        
+
 
         list_devices.append(Device(device_info, device_type, device_serial, device_udid))
-    
+
     return list_devices
 
 def set_file_name(name):
@@ -28,7 +28,7 @@ def set_file_name(name):
     Input : name of the device
     Output : None
     '''
-    
+
     global requested_file
     print("set file name function called")
     requested_file = name + "_" + str(calendar.timegm(time.gmtime())) + ".pcapng"
@@ -52,8 +52,5 @@ def create_packet_capture_thread(udid, name):
     Output : None
     '''
     print("create packet capture thread called")
-    # thread = threading.Thread(target = rvi.start_capture)
-    # thread.start()
-    # thread.join()
-    # print("thread started")
-    # return thread
+    thread = Thread()
+
