@@ -29,10 +29,10 @@ def set_file_name(name):
     Output : None
     '''
     
-    global file_name
+    global requested_file
     print("set file name function called")
-    file_name = name + "_" + str(calendar.timegm(time.gmtime())) + ".pcapng"
-    print("name set with: ", file_name)
+    requested_file = name + "_" + str(calendar.timegm(time.gmtime())) + ".pcapng"
+    print("name set with: ", requested_file)
 
 
 
@@ -42,5 +42,18 @@ def get_file_name():
     Input : None
     Output : file name
     '''
-    global file_name
-    return file_name
+    global requested_file
+    return requested_file
+
+def create_packet_capture_thread(udid, name):
+    '''
+    Function : create a thread for the packet capture
+    Input : udid
+    Output : None
+    '''
+    print("create packet capture thread called")
+    # thread = threading.Thread(target = rvi.start_capture)
+    # thread.start()
+    # thread.join()
+    # print("thread started")
+    # return thread

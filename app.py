@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response
 import app_function as af
 import json
 from flask_cors import CORS
@@ -9,11 +9,11 @@ import calendar
 import device as dv
 
 app = Flask(__name__)
-CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
+CORS(app, resources={r"/*": {"origins": "*"}})
+# socketio = SocketIO(app, cors_allowed_origins="*")
 
 #global variable
-file_name = ""
+requested_file = ""
 
 
 
@@ -26,6 +26,7 @@ def list_devices():
 
 
 @app.route("/<udid>", methods=['POST'])
+# @cross_origin(origin='127.0.0.1:5000',headers=['Content-Type','Authorization'])
 # requests a packet capture from the device
 def get_packet(udid):
     parsed_json = json.loads(request.data.decode('utf-8'))
@@ -36,13 +37,17 @@ def get_packet(udid):
     print("Device Name: ", device_name)
 
     af.set_file_name(device_name)
-    rvi.start_capture(udid, file_name)
+    rvi.start_capture(udid)
 
-    return jsonify({"message": "Started capture with file name: " + af.get_file_name()})
+    response = make_response()
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add('Access-Control-Allow-Headers', "*")
+    response.headers.add('Access-Control-Allow-Methods', "*")
+    response = jsonify({"message": "Started capture", "file_name": af.get_file_name()})
 
-@socketio.on('message')
-def handle_message(message):
-    print("")
+    return response
+
+
 
 @app.route("/stop/<udid>", methods=['GET'])
 # stops the packet capture

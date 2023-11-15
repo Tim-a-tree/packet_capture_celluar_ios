@@ -12,6 +12,7 @@ import subprocess
 import socketio
 import calendar
 from threading import Event
+import app_function as af
 
 # TODO: refactor this code
 # code from https://github.com/gh2o/rvi_capture
@@ -340,16 +341,16 @@ stderr_print = functools.partial(print, file=sys.stderr)
 global exit_capture
 exit_capture = Event()
 
-def start_capture(udid, file_name):
+def start_capture(udid):
     # turn off buffered output
     if isinstance(sys.stdout.buffer, io.BufferedWriter):
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer.detach())
     # open output file
-    file_name = str(calendar.timegm(time.gmtime())) + ".pcapng"
-    file_write = open(file_name, 'wb', 0)
+    file_n = af.get_file_name()
+    file_write = open(file_n, 'wb', 0)
 
     # start capture
-    stderr_print('capturing to {} ...'.format(file_name))
+    stderr_print('capturing to {} ...'.format(file_n))
     num_packets = 0
     def packet_callback(pkt):
         nonlocal num_packets
@@ -358,8 +359,9 @@ def start_capture(udid, file_name):
     try:
         while not exit_capture.is_set():
             packet_extractor = PacketExtractor(udid=udid)
-            packet_dumper = NGPacketDumper(packet_extractor, file_name)
-            packet_dumper.run(packet_callback)
+            packet_dumper = NGPacketDumper(packet_extractor, file_n)
+            # packet_dumper.run(packet_callback)
+            packet_dumper.run()
     except KeyboardInterrupt:
         stderr_print()
         stderr_print('closing capture ...')
@@ -372,3 +374,5 @@ def stop_capture():
     exit_capture.set()
     exit_capture.clear()
 # live capture needed to be implemented
+
+
