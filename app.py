@@ -36,7 +36,7 @@ def get_packet(udid):
     print("Device Name: ", device_name)
 
     af.set_file_name(device_name)
-    # rvi.start_live_capture(udid, file_name)
+    rvi.start_capture(udid, file_name)
 
     return jsonify({"message": "Started capture with file name: " + af.get_file_name()})
 
@@ -48,7 +48,7 @@ def handle_message(message):
 # stops the packet capture
 def stop_packet(udid):
 
-    rvi.stop_live_capture(udid)
+    rvi.stop_capture()
 
     return jsonify({"message": "Stopped capture", "file_name": af.get_file_name()})
 
