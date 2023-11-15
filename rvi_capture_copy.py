@@ -10,6 +10,8 @@ import sys
 import time
 import subprocess
 import socketio
+import calendar
+from threading import Event
 
 # TODO: refactor this code
 # code from https://github.com/gh2o/rvi_capture
@@ -333,12 +335,18 @@ class PCAPPacketDumper(PacketDumper):
 
 stderr_print = functools.partial(print, file=sys.stderr)
 
+
+
+global exit_capture
+exit_capture = Event()
+
 def start_capture(udid, file_name):
     # turn off buffered output
     if isinstance(sys.stdout.buffer, io.BufferedWriter):
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer.detach())
     # open output file
-    file_name = open(file_name, 'wb', 0)
+    file_name = str(calendar.timegm(time.gmtime())) + ".pcapng"
+    file_write = open(file_name, 'wb', 0)
 
     # start capture
     stderr_print('capturing to {} ...'.format(file_name))
@@ -348,20 +356,19 @@ def start_capture(udid, file_name):
         num_packets += 1
         stderr_print('\r{} packets captured.'.format(num_packets), end='', flush=True)
     try:
-        packet_extractor = PacketExtractor(udid=udid)
-        packet_dumper = NGPacketDumper(packet_extractor, file_name)
-        packet_dumper.run(packet_callback)
+        while not exit_capture.is_set():
+            packet_extractor = PacketExtractor(udid=udid)
+            packet_dumper = NGPacketDumper(packet_extractor, file_name)
+            packet_dumper.run(packet_callback)
     except KeyboardInterrupt:
         stderr_print()
         stderr_print('closing capture ...')
-        file_name.close()
+        file_write.close()
     except:
         stderr_print()
         raise
 
-# TODO: live capture using pyshark check documentation 'pyshark' module
-def start_live_capture(udid):
-    # command = "wireshark -k -i -"
-    # process = subprocess.Popen(["win_cmd", command], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-    capture = pyshark.LiveCapture(interface = "USB", bpf_filter='ether src host 11:22:33:44:55:66', use_json=True, include_raw=True)
-    
+def stop_capture():
+    exit_capture.set()
+    exit_capture.clear()
+# live capture needed to be implemented

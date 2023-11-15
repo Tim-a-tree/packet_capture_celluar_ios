@@ -2,36 +2,18 @@ from sys import platform
 from pymobiledevice3 import usbmux, lockdown, services
 import rvi_capture_copy as rvi
 import time
-
-
-# WARNING: on development,
-
-
-# def get_interface(udid):
-#     # get the lockdown client for the first connected device
-#     client = lockdown.create_using_usbmux()
-
-#     # get the network information
-#     network_info = client.get_value("com.apple.mobile.data_sync", "com.apple.mobile.wireless_lockdown", "WiFiNetworkInfo", udid)
-
-
-#     # extract the interface name
-#     interface = network_info["InterfaceName"]
-    
-
-#     return interface
+import calendar
+import datetime
+import logging
 
 # auto-detection
 def auto_detect():
     devices = usbmux.list_devices()
     
     return devices
-
-# TODO: realtime packet capture
 # TODO: changing the packet capture algorithm with C code (using libimobiledevice)
-# TODO: able to select the device from the multiple devices
 
-import logging
+
 
 def main():
     # gets the list of connected device
@@ -52,10 +34,22 @@ def main():
     print("Select the device from the list:")
     device_num = int(input())
     udid = device_name[device_num].serial
-    print("UDID: ", udid) 
+    print("UDID: ", udid)
 
-    file_name = input("Please enter the name of the file: ")
-    file_name = file_name + ".pcapng"
+    client = lockdown.create_using_usbmux(udid)
+
+    device_info = client.get_value(None, "DeviceName")
+    device_type = client.get_value(None, "ProductType")
+    device_serial = client.get_value(None, "SerialNumber")
+    device_udid = client.get_value(None, "UniqueDeviceID")
+
+
+    file_name = device_info + "_" + str(calendar.timegm(time.gmtime())) + ".pcapng"
+
+
+'''
+############    Currently, the live capture is not working properly.
+DIABLED
 
     # live capture option
     print("Live Capture?(Y/N)")
@@ -64,9 +58,10 @@ def main():
 
     if live == "Y":
         rvi.start_live_capture(udid)
+        exit()
     print("\n\nStart Capturing the packets from the device, in order to stop the capture press 'Ctrl + C'\n\n")
     rvi.start_capture(udid, file_name)
-
+'''
 
 
 if __name__ == "__main__":
