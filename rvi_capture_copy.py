@@ -10,6 +10,8 @@ import sys
 import time
 import subprocess
 import socketio
+import os
+import signal
 
 # TODO: refactor this code
 # code from https://github.com/gh2o/rvi_capture
@@ -351,7 +353,7 @@ def start_capture(udid, file_name):
         packet_extractor = PacketExtractor(udid=udid)
         packet_dumper = NGPacketDumper(packet_extractor, file_name)
         packet_dumper.run(packet_callback)
-    except KeyboardInterrupt:
+    except KeyboardInterrupt or signal.SIGTERM:
         stderr_print()
         stderr_print('closing capture ...')
         file_name.close()
@@ -359,8 +361,16 @@ def start_capture(udid, file_name):
         stderr_print()
         raise
 
-# TODO: live capture using pyshark check documentation 'pyshark' module
-def start_live_capture(udid):
-    # command = "wireshark -k -i -"
-    # process = subprocess.Popen(["win_cmd", command], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-    capture = pyshark.LiveCapture(interface = "USB", bpf_filter='ether src host 11:22:33:44:55:66', use_json=True, include_raw=True)
+
+def stop_capture(process_pid):
+    # get global variable from app.py
+
+    try:
+        os.kill(process_pid, signal.SIGTERM)
+        print("process killed")
+    except OSError:
+        print("process already killed")
+        pass
+    
+    return
+

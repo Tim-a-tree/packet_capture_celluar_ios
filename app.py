@@ -7,6 +7,9 @@ import rvi_capture_copy as rvi
 import datetime
 import calendar
 import device as dv
+from threading import Thread
+from multiprocessing import Process
+import ctypes
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -14,6 +17,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 #global variable
 requested_file = ""
+process_list = []
 
 
 
@@ -26,7 +30,6 @@ def list_devices():
 
 
 @app.route("/<udid>", methods=['POST'])
-# @cross_origin(origin='127.0.0.1:5000',headers=['Content-Type','Authorization'])
 # requests a packet capture from the device
 def get_packet(udid):
     parsed_json = json.loads(request.data.decode('utf-8'))
@@ -37,7 +40,14 @@ def get_packet(udid):
     print("Device Name: ", device_name)
 
     af.set_file_name(device_name)
-    rvi.start_capture(udid, af.get_file_name())
+
+    p = Process(target=rvi.start_capture, args=(udid, af.get_file_name(),))
+    p.daemon = True
+    p.start()
+    process_pid = p.pid
+    print("Process started", p.pid)
+    process_list.append(process_pid)
+    print("Process list updated:", process_list)
 
     response = make_response()
     response.headers.add("Access-Control-Allow-Origin", "*")
@@ -45,6 +55,8 @@ def get_packet(udid):
     response.headers.add('Access-Control-Allow-Methods', "*")
     response = jsonify({"message": "Started capture", "file_name": af.get_file_name()})
 
+
+    print("end of get packet function")
     return response
 
 
@@ -53,7 +65,11 @@ def get_packet(udid):
 # stops the packet capture
 def stop_packet(udid):
 
-    rvi.stop_capture()
+    print("stop packet function called")
+    print("Process list:", process_list)
+
+    process_pid = process_list.pop()
+    rvi.stop_capture(process_pid)
 
     return jsonify({"message": "Stopped capture", "file_name": af.get_file_name()})
 
