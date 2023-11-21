@@ -339,8 +339,13 @@ def start_capture(udid, file_name):
     # turn off buffered output
     if isinstance(sys.stdout.buffer, io.BufferedWriter):
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer.detach())
+
+    # create output directory using current working directory
+    dir_path = os.getcwd() + "/captures"
+    if not os.path.exists(dir_path):
+        os.makedirs(os.getcwd() + "/captures")
     # open output file
-    file_name = open(file_name, 'wb', 0)
+    file_name = open(dir_path + "/" + file_name, 'wb', 0)
 
     # start capture
     stderr_print('capturing to {} ...'.format(file_name))

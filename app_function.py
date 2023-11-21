@@ -2,6 +2,8 @@ from pymobiledevice3 import usbmux, lockdown, services
 from device import Device
 import calendar
 import time
+import pathlib
+import os
 
 def list_devices():
     devices = usbmux.list_devices()
@@ -44,6 +46,20 @@ def get_file_name():
     '''
     global requested_file
     return requested_file
+
+def get_file_path():
+    '''
+    Function : get the file path for the packet capture
+    Input : None
+    Output : file path
+    '''
+    global requested_file
+
+    file_path = os.path.join(os.getcwd(), "captures")
+    file_path = os.path.join(file_path, requested_file)
+
+    return file_path
+
 
 def create_packet_capture_thread(udid, name):
     '''

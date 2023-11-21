@@ -71,8 +71,8 @@ def stop_packet(udid):
     process_pid = process_list.pop()
     rvi.stop_capture(process_pid)
 
-    return jsonify({"message": "Stopped capture", "file_name": af.get_file_name()})
+    return jsonify({"message": "Stopped capture", "file_name": af.get_file_name(), "file_path": af.get_file_path()})
 
 
 if __name__ == '__main__':
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=False)
