@@ -3,7 +3,10 @@ import os
 import platform
 
 
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtWidgets import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+
 
 os.environ['QT_FONT_DPI'] = '96'
 
@@ -17,6 +20,18 @@ class MainWindow(QMainWindow):
         # Applying Window Title
         self.setWindowTitle(title)
         # widgets.titleRightInfo.setText(description)
+
+        # Set Window Size
+        QMainWindow.resize(self, 1280, 720)
+        QMainWindow.setMinimumSize(self, 800, 600)
+
+        # Set Font
+        font = QFont()
+        font.setFamily(u"Seoge UI")
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+
 
 
 if __name__ == "__main__":
