@@ -6,13 +6,16 @@ import platform
 from PyQt6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
-
+from ui_mainwindow import Ui_MainWindow
 
 os.environ['QT_FONT_DPI'] = '96'
 
 class MainWindow(QMainWindow):
     def __init__(self):
-        QMainWindow.__init__(self)
+        # Initialize
+        super(MainWindow, self).__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
 
         title = 'iOS Packet Capture Tool'
         description = 'This tool is used to capture packets from iOS devices from Windows.'
