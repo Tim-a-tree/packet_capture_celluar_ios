@@ -366,6 +366,41 @@ def start_capture(udid, file_name):
         stderr_print()
         raise
 
+def start_live_capture(udid, file_name):
+    # turn off buffered output
+    if isinstance(sys.stdout.buffer, io.BufferedWriter):
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer.detach())
+
+    # create output directory using current working directory
+    dir_path = os.getcwd() + "/captures"
+    if not os.path.exists(dir_path):
+        os.makedirs(os.getcwd() + "/captures")
+
+    input_wireshark_file = dir_path + "/" + file_name
+    # open output file
+    file_name = open(dir_path + "/" + file_name, 'wb', 0)
+
+    # start capture
+    stderr_print('capturing to {} ...'.format(file_name))
+    num_packets = 0
+    def packet_callback(pkt):
+        nonlocal num_packets
+        num_packets += 1
+        stderr_print('\r{} packets captured.'.format(num_packets), end='', flush=True)
+    try:
+        subprocess.Popen(["C:\\Program Files\\Wireshark\\Wireshark.exe", "-i", "-", "-r", input_wireshark_file], creationflags=subprocess.DETACHED_PROCESS, shell=True)
+
+        packet_extractor = PacketExtractor(udid=udid)
+        packet_dumper = NGPacketDumper(packet_extractor, file_name)
+        packet_dumper.run(packet_callback)
+    except KeyboardInterrupt or signal.SIGTERM:
+        stderr_print()
+        stderr_print('closing capture ...')
+        file_name.close()
+    except:
+        stderr_print()
+        raise
+
 
 def stop_capture(process_pid):
     # get global variable from app.py
