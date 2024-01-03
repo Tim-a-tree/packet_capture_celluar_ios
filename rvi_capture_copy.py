@@ -400,17 +400,3 @@ def start_live_capture(udid, file_name):
     except:
         stderr_print()
         raise
-
-
-def stop_capture(process_pid):
-    # get global variable from app.py
-
-    try:
-        os.kill(process_pid, signal.SIGTERM)
-        print("process killed")
-    except OSError:
-        print("process already killed")
-        pass
-    
-    return
-
