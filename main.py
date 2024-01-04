@@ -42,10 +42,15 @@ def main():
 
     print("Select the device from the list:")
     device_num = int(input())
-    udid = device_name[device_num].serial
+    udid = device_name[device_num][0]
     print("UDID: ", udid)
 
-    client = lockdown.create_using_usbmux(udid)
+    if device_name[device_num][1] == "Android":
+        print("Android device is not supported yet")
+        exit()
+    if device_name[device_num][1] == "iOS":
+        print("iOS device is selected")
+        client = lockdown.create_using_usbmux(udid)
 
     device_info = client.get_value(None, "DeviceName")
     device_type = client.get_value(None, "ProductType")
