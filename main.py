@@ -73,10 +73,16 @@ def main():
 
     print("Start Capturing the packets from the device, in order to stop the capture press 'Ctrl + C'\n\n")
 
-    if live:
-        rvi.start_live_capture(udid, file_name)
+    if live=="Y" or live=="y":
+        if platform_key == 0:
+            rvi.start_live_capture(udid, file_name)
+        if platform_key == 1:
+            print("Android device is not supported yet")
     else:
-        rvi.start_capture(udid, file_name)
+        if platform_key == 0:
+            rvi.start_capture(udid, file_name)
+        if platform_key == 1:
+            print("Android device is not supported yet")
     
 
 
