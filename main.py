@@ -3,17 +3,26 @@ from pymobiledevice3 import usbmux, lockdown, services
 import rvi_capture_copy as rvi
 import time
 import calendar
-
+from adbutils import adb
 
 # TODO: changing the packet capture algorithm with C code (using libimobiledevice)
 
 # auto-detection
 def auto_detect():
-    devices = usbmux.list_devices()
+    devices = []
     
+    # iOS devices
+    for d in usbmux.list_devices():
+        devices.append([d.serial, "iOS"])
+
+    # Android devices
+    for d in adb.device_list():
+        devices.append([d.serial, "Android"])
+
     return devices
 
 def main():
+    
     # if no device is connected, wait until the device is connected
     while True:
         device_name = auto_detect()
@@ -25,9 +34,11 @@ def main():
 
     # gets the list of connected device
     # NOTE: only shows number, udid, type 
+    id = ["No.", "Device Name", "Device Type"]
     print("----------------- Connected Devices -----------------")
+    print("{:<5} {:<30} {:<20}".format(*id))
     for i in range(len(device_name)):
-        print(i, device_name[i].serial)
+        print("{:<5} {:<30} {:<20}".format(i, device_name[i][0], device_name[i][1]))
 
     print("Select the device from the list:")
     device_num = int(input())
