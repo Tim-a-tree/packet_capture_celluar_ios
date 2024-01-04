@@ -45,18 +45,25 @@ def main():
     udid = device_name[device_num][0]
     print("UDID: ", udid)
 
+    # device information initialization
+    device_info, device_type, device_serial, device_udid = "", "", "", ""
+    platform_key = 0 # 0: iOS, 1: Android
+
+    # get the device information
     if device_name[device_num][1] == "Android":
         print("Android device is not supported yet")
-        exit()
+
+        device_info = device_name[device_num][0]
+        platform_key = 1
+
     if device_name[device_num][1] == "iOS":
         print("iOS device is selected")
         client = lockdown.create_using_usbmux(udid)
 
-    device_info = client.get_value(None, "DeviceName")
-    device_type = client.get_value(None, "ProductType")
-    device_serial = client.get_value(None, "SerialNumber")
-    device_udid = client.get_value(None, "UniqueDeviceID")
-
+        device_info = client.get_value(None, "DeviceName")
+        device_type = client.get_value(None, "ProductType")
+        device_serial = client.get_value(None, "SerialNumber")
+        device_udid = client.get_value(None, "UniqueDeviceID")
 
     file_name = device_info + "_" + str(calendar.timegm(time.gmtime())) + ".pcapng"
 
